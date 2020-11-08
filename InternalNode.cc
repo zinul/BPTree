@@ -1,28 +1,28 @@
 #include "BPTree.h"
-std::shared_ptr<Node> InternalNode::GetChildPtr(int i)
-{
-    return child_ptr[i];
-};
-int InternalNode::SearchPos(index_t key)
-{
-    if (key>=keys[total_children-1])
-    {
-        return total_children-1;    
-    }
+// std::shared_ptr<Node> InternalNode::GetChildPtr(int i)
+// {
+//     return child_ptr[i];
+// };
+// int InternalNode::SearchPos(index_t key, bool is_search)
+// {
+//     if (key>=keys[total_children-1])
+//     {
+//         return total_children-1;    
+//     }
     
-    for(auto i=total_children-1;i>=0;i--)
-    {
-        if(key<keys[i])
-        {
-            continue;
-        }
-        else
-        {
-            return i;
-        }
-    }
-    return LESS_THAN_MIN;
-}
+//     for(auto i=total_children-1;i>=0;i--)
+//     {
+//         if(key<keys[i])
+//         {
+//             continue;
+//         }
+//         else
+//         {
+//             return i;
+//         }
+//     }
+//     return LESS_THAN_MIN;
+// }
 
 void InternalNode::UpdateKey(index_t old_key)
 {
