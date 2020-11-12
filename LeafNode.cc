@@ -66,10 +66,14 @@ void LeafNode::SplitNode()
         auto &new_parent_keys = new_parent_node->GetKeys();
         new_parent_child_ptrs.push_back(work_node);
         new_parent_keys.push_back(keys[0]);
-
+        new_parent_node->GetNumOfChildren()++;
+        
         parent_node = new_parent_node;
+        new_node->GetParNode()=new_parent_node;
+
         b_plus_tree.root_node =
             std::dynamic_pointer_cast<Node>(new_parent_node);
+        std::cout<<new_parent_node->GetChildPtr()[0]<<std::endl;
     PrintNode(new_parent_node);
     }
     PrintNode(work_node);

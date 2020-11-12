@@ -51,20 +51,30 @@ void const BPTree::PrintTree()
     while (!work_node->is_leaf)
     {
         auto first_node = work_node;
-        for (int i = 0; i < work_node->GetNumOfChildren(); i++)
+        // for (int i = 0; i < work_node->GetNumOfChildren(); i++)
+        // {
+        //     std::cout << work_node->GetKeys()[i] << std::endl;
+        // }
+        // std::cout << std::endl;
+        while (work_node)
         {
-            std::cout << work_node->GetKeys()[i] << std::endl;
-        }
-        std::cout << std::endl;
+            PrintNode(work_node);
+            work_node=work_node->GetNextNode();
+            
+        }        
+
         work_node = std::dynamic_pointer_cast<InternalNode>(first_node)
                         ->GetChildPtr()[0];
         // sleep(1);
     }
+
     while (work_node)
     {
+        std::cout<<work_node->total_children<<std::endl;
         for (int i = 0; i < work_node->GetNumOfChildren(); i++)
         {
-            std::cout << work_node->GetKeys()[i] << " ";
+
+            std::cout << work_node->GetKeys()[i] << " i:"<<i;
             std::cout << std::dynamic_pointer_cast<LeafNode>(work_node)
                              ->GetValue()[i]
                              .domain

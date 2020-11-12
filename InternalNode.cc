@@ -54,7 +54,14 @@ void InternalNode::InsertIntoNode(index_t key,
                                   std::shared_ptr<Node> new_child_ptr)
 {
     int insert_pos;
-    for (insert_pos = 0; insert_pos < keys.size(); insert_pos++)
+    if (key > keys[keys.size() - 1])
+    {
+        keys.push_back(key);
+        child_ptr.push_back(new_child_ptr);
+        total_children++;
+        return;
+    }
+    for (insert_pos = 0; insert_pos < total_children; insert_pos++)
     {
         if (keys[insert_pos] > key)
         {
