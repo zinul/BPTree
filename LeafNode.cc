@@ -1,14 +1,18 @@
 #include "BPTree.h"
-BPTree b_plus_tree;
-std::vector<Value> &LeafNode::GetValue() { return this->values; };
+extern BPTree b_plus_tree;
 void LeafNode::InsertIntoNode(index_t key, Value new_value)
 {
-    b_plus_tree.root_node;
+    // b_plus_tree.root_node;
+
+    std::cout<<"LeafInsert"<<std::endl;
+    std::cout<<total_children<<std::endl;
+
     if (total_children == 0)
     {
         keys.push_back(key);
         LeafNode::values.push_back(Value(new_value.domain));
         total_children++;
+        std::cout<<total_children;
         return;
     }
     int insert_pos;
@@ -18,6 +22,7 @@ void LeafNode::InsertIntoNode(index_t key, Value new_value)
         {
             keys.insert(keys.begin() + insert_pos, key);
             values.insert(values.begin() + insert_pos, new_value);
+            total_children++;
             break;
         }
         else if (keys[insert_pos] == key)
@@ -65,15 +70,24 @@ void LeafNode::SplitNode()
         parent_node = new_parent_node;
         b_plus_tree.root_node =
             std::dynamic_pointer_cast<Node>(new_parent_node);
+    PrintNode(new_parent_node);
     }
-    parent_node->InsertIntoNode(new_keys[0], new_node);
-    if (parent_node->GerNumOfChildren() == 2 * MIN_NUM)
+    PrintNode(work_node);
+    PrintNode(new_node);
+
+    std::dynamic_pointer_cast<InternalNode>(parent_node)
+        ->InsertIntoNode(new_keys[0], new_node);
+    if (parent_node->GetNumOfChildren() == 2 * MIN_NUM)
     {
         parent_node->SplitNode();
     }
 }
 // Value Search(index_t key)
 // {}
+int LeafNode::SearchPos(index_t key)
+{
+    return SearchPos(key,true);
+}
 int LeafNode::SearchPos(index_t key, bool is_search)
 {
     if (key > keys[total_children - 1])

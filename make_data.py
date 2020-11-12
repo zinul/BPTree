@@ -18,7 +18,7 @@ def random_ip():
     return [address[0:-1],int_ip]
 
 for i in range(int(sys.argv[1])):
-    print(random_ip()[0], end='\t')
+    # print(random_ip()[0], end='\t')
     print(random_name(random.randint(4,10))+".com",end='\t')
     print(random_ip()[1])
     
