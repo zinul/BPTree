@@ -6,7 +6,7 @@ extern BPTree b_plus_tree;
 // };
 void InternalNode::SplitNode()
 {
-    auto new_node = std::make_shared<InternalNode>(b_plus_tree.node_nums++);
+    auto new_node = std::make_shared<InternalNode>(++b_plus_tree.node_nums);
     auto &new_keys = new_node->GetKeys();
     auto &new_child_ptr = new_node->GetChildPtr();
 
@@ -32,7 +32,7 @@ void InternalNode::SplitNode()
     if (work_node->GetParNode() == nullptr)
     {
         auto new_parent_node =
-            std::make_shared<InternalNode>(b_plus_tree.node_nums++);
+            std::make_shared<InternalNode>(++b_plus_tree.node_nums);
         auto &new_parent_child_ptrs = new_parent_node->GetChildPtr();
         auto &new_parent_keys = new_parent_node->GetKeys();
         new_parent_child_ptrs.push_back(work_node);

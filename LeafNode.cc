@@ -39,7 +39,7 @@ void LeafNode::InsertIntoNode(index_t key, Value new_value)
 }
 void LeafNode::SplitNode()
 {
-    auto new_node = std::make_shared<LeafNode>(b_plus_tree.node_nums++);
+    auto new_node = std::make_shared<LeafNode>(++b_plus_tree.node_nums);
     auto &new_keys = new_node->GetKeys();
     auto &new_value = new_node->GetValue();
 
@@ -61,9 +61,10 @@ void LeafNode::SplitNode()
     if (work_node->GetParNode() == nullptr)
     {
         auto new_parent_node =
-            std::make_shared<InternalNode>(b_plus_tree.node_nums++);
+            std::make_shared<InternalNode>(++b_plus_tree.node_nums);
         auto &new_parent_child_ptrs = new_parent_node->GetChildPtr();
         auto &new_parent_keys = new_parent_node->GetKeys();
+
         new_parent_child_ptrs.push_back(work_node);
         new_parent_keys.push_back(keys[0]);
         new_parent_node->GetNumOfChildren()++;
@@ -74,13 +75,13 @@ void LeafNode::SplitNode()
         b_plus_tree.root_node =
             std::dynamic_pointer_cast<Node>(new_parent_node);
         std::cout<<new_parent_node->GetChildPtr()[0]<<std::endl;
-    PrintNode(new_parent_node);
     }
     PrintNode(work_node);
     PrintNode(new_node);
 
     std::dynamic_pointer_cast<InternalNode>(parent_node)
         ->InsertIntoNode(new_keys[0], new_node);
+    PrintNode(new_node->GetParNode());
     if (parent_node->GetNumOfChildren() == 2 * MIN_NUM)
     {
         parent_node->SplitNode();

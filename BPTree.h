@@ -1,8 +1,8 @@
+#include <algorithm>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <algorithm>
 // #include "InternalNode.h"
 // #include "LeafNode.h"
 using index_t = unsigned int;
@@ -28,23 +28,14 @@ protected:
     std::vector<index_t> keys;
 
 public:
-    Node()
-        : total_children(0),
-          cur_node_num(0),
-          pre_node(nullptr),
-          next_node(nullptr),
-          parent_node(nullptr),
-          keys{std::vector<index_t>()}
-    {
-
-    }
-    Node(int node_nums) : Node() {std::cout<<"cur:"<<node_nums<<std::endl; cur_node_num = node_nums; }
+    Node()=default;
+    Node(int node_nums) : Node() { cur_node_num = node_nums; }
     bool is_leaf;
-    std::vector<index_t>& GetKeys() { return keys; }
-    std::shared_ptr<Node>& GetPreNode() { return pre_node; }
-    std::shared_ptr<Node>& GetNextNode() { return next_node; }
-    std::shared_ptr<Node>& GetParNode() { return parent_node; }
-    int &GetNumOfChildren() { return total_children; }
+    virtual std::vector<index_t>& GetKeys() = 0;
+    virtual std::shared_ptr<Node>& GetPreNode() = 0;
+    virtual std::shared_ptr<Node>& GetNextNode() = 0;
+    virtual std::shared_ptr<Node>& GetParNode() = 0;
+    virtual int& GetNumOfChildren() = 0;
     // virtual std::vector<Value>& GetValue(){};
     // virtual std::vector<std::shared_ptr<Node>>& GetChildPtr(){};
     // virtual void InsertIntoNode(index_t key, Value value)=0;
@@ -60,21 +51,26 @@ public:
     // virtual void MergeNode()=0;
     virtual void UpdateKey(index_t old_key) = 0;
 
-    friend void PrintNode(std::shared_ptr<Node>node);
+    friend void PrintNode(std::shared_ptr<Node> node);
     friend class BPTree;
 };
-class LeafNode : public Node
+class LeafNode :virtual public Node
 {
 private:
     std::vector<Value> values;
 
 public:
     LeafNode() : Node() { is_leaf = true; };
-    LeafNode(const int i) : Node(i), values{std::vector<Value>()}
+    LeafNode(const int i) : Node(i)
     {
         is_leaf = true;
     }
-    std::vector<Value>& GetValue(){return values;};
+    std::vector<Value>& GetValue() { return values; };
+    virtual std::vector<index_t>& GetKeys() { return keys; }
+    virtual std::shared_ptr<Node>& GetPreNode() { return pre_node; }
+    virtual std::shared_ptr<Node>& GetNextNode() { return next_node; }
+    virtual std::shared_ptr<Node>& GetParNode() { return parent_node; }
+    virtual int& GetNumOfChildren() override { return total_children; };
     // { return this->value; };
 
     void InsertIntoNode(index_t key, Value value);
@@ -82,7 +78,7 @@ public:
 
     // virtual Value Search(index_t key) override;
     int SearchPos(index_t key, bool is_search);
-    virtual int SearchPos(index_t key)override;
+    virtual int SearchPos(index_t key) override;
 
     // virtual int DeleteOneItem(index_t key) override;
     // virtual int LendOneItem() override;
@@ -93,26 +89,30 @@ public:
 
     ~LeafNode(){};
 };
-class InternalNode : public Node
+class InternalNode :virtual public Node
 {
 private:
     std::vector<std::shared_ptr<Node>> child_ptr;
 
 public:
-    InternalNode()
-        : Node(), child_ptr{std::vector<std::shared_ptr<Node>>()}
+    InternalNode() : Node()
     {
         is_leaf = false;
     };
-    InternalNode(int i) : Node(i) {cur_node_num = i; }
+    InternalNode(int i) : Node(i) {is_leaf=false;}
 
     std::vector<std::shared_ptr<Node>>& GetChildPtr() { return child_ptr; };
+    virtual std::vector<index_t>& GetKeys() { return keys; }
+    virtual std::shared_ptr<Node>& GetPreNode() { return pre_node; }
+    virtual std::shared_ptr<Node>& GetNextNode() { return next_node; }
+    virtual std::shared_ptr<Node>& GetParNode() { return parent_node; }
+    virtual int& GetNumOfChildren() { return total_children; }
 
     void InsertIntoNode(index_t key, std::shared_ptr<Node> new_node);
     virtual void SplitNode() override;
     // Value Search(index_t key) override;
 
-    virtual int SearchPos(index_t key)override;
+    virtual int SearchPos(index_t key) override;
 
     // int DeleteOneItem(index_t key) override;
     // int LendOneItem() override;
@@ -133,15 +133,15 @@ public:
     std::shared_ptr<Node> root_node;
     BPTree() : data_nums(0), node_nums(0)
     {
-        auto temp = std::make_shared<LeafNode>(0);
-        root_node = std::dynamic_pointer_cast<Node>(temp);
+        root_node =
+            std::dynamic_pointer_cast<Node>(std::make_shared<LeafNode>(0));
         root_node->is_leaf = true;
     };
     void Insert(index_t key, Value value);
-    void Insert(std::fstream& in,int n);
+    void Insert(std::fstream& in, int n);
     int Delete(index_t key);
     int Search(index_t key);
     void const PrintTree();
     // ~BPTree();
 };
-void PrintNode(std::shared_ptr<Node>node);
+void PrintNode(std::shared_ptr<Node> node);

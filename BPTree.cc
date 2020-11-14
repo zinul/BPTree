@@ -17,7 +17,7 @@ void BPTree::Insert(index_t key, Value value)
         }
         work_node = std::dynamic_pointer_cast<InternalNode>(work_node)
                         ->GetChildPtr()[i];
-        std::cout << "i" << std::endl;
+        // std::cout << "i" << std::endl;
     }
     if (work_node->is_leaf)
     {
@@ -27,8 +27,9 @@ void BPTree::Insert(index_t key, Value value)
         {
             work_node->SplitNode();
         }
+        PrintNode(work_node);
         data_nums++;
-        std::cout << node_nums << std::endl;
+        std::cout <<"insert node:" <<node_nums <<std::endl;
     }
     return;
 }
@@ -39,7 +40,9 @@ void BPTree::Insert(std::fstream& in, int n)
         index_t key;
         Value value;
         in >> value.domain >> key;
+        std::cout<<"insert key "<<key<< std::endl;
         Insert(key, value);
+        std::cout<<"\n\n";
         PrintTree();
         n--;
     }
@@ -59,22 +62,23 @@ void const BPTree::PrintTree()
         while (work_node)
         {
             PrintNode(work_node);
-            work_node=work_node->GetNextNode();
-            
-        }        
+            work_node = work_node->GetNextNode();
+        }
 
         work_node = std::dynamic_pointer_cast<InternalNode>(first_node)
                         ->GetChildPtr()[0];
-        // sleep(1);
+        // std::cout << std::dynamic_pointer_cast<InternalNode>(first_node)
+        //                  ->GetChildPtr()[0]
+        //           << std::endl;
     }
 
-    while (work_node)
+    while (work_node&&work_node->is_leaf)
     {
-        std::cout<<work_node->total_children<<std::endl;
-        for (int i = 0; i < work_node->GetNumOfChildren(); i++)
+        work_node=std::dynamic_pointer_cast<LeafNode>(work_node);
+        std::cout << "leaf node:"<<work_node->cur_node_num<< std::endl;
+        for (int i = 0; i < std::dynamic_pointer_cast<LeafNode>(work_node)->GetNumOfChildren(); i++)
         {
-
-            std::cout << work_node->GetKeys()[i] << " i:"<<i;
+            std::cout << std::dynamic_pointer_cast<LeafNode>(work_node)->GetKeys()[i]<<" " ;
             std::cout << std::dynamic_pointer_cast<LeafNode>(work_node)
                              ->GetValue()[i]
                              .domain
@@ -86,9 +90,13 @@ void const BPTree::PrintTree()
 }
 void PrintNode(std::shared_ptr<Node> node)
 {
-    std::cout<<"node:"<<std::endl;
+    std::cout << "node:" << node->cur_node_num << std::endl;
     for (int i = 0; i < node->GetNumOfChildren(); i++)
     {
-        std::cout << node->GetKeys()[i] << std::endl;
+        std::cout << node->GetKeys()[i];
+        if(node->is_leaf)
+            std::cout << std::dynamic_pointer_cast<LeafNode>(node)->GetValue()[i].domain << std::endl;
+        else
+            std::cout<<std::endl;
     }
 }
